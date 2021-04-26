@@ -1,0 +1,24 @@
+{
+  "name": "Sim Companies X",
+  "description": "Quality of Life tools for the game Sim Companies",
+  "version": "1.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {},
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.simcompanies.com/messages/*chatroom_Sale*"],
+      "run_at": "document_end",
+      "js": ["contentScript.js"]
+    }
+  ],
+  "icons": {
+    "16": "/images/logo.png",
+    "32": "/images/logo.png",
+    "48": "/images/logo.png",
+    "128": "/images/logo.png"
+  }
+}

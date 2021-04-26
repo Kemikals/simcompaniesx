@@ -1,0 +1,38 @@
+#container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: space-around;
+    margin: 0 1rem 0 1rem;
+}
+
+#content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: space-around;
+    margin: 0 1rem 0 1rem;
+}
+
+.selection {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    margin: 1rem;
+}
+.resources {
+    width:5%; /* you can use % */
+    height: auto;
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
