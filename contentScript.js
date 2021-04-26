@@ -29,7 +29,6 @@ function registerListenerOnWindow() {
     const callback = function (mutationsList, observer) {
         for (const mutation of mutationsList) {
             if (mutation.type === 'characterData' && mutation.target.data === 'Sale') {
-                console.log(mutation)
                 if (button && button2) {
                     button.remove();
                     button2.remove();
