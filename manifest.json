@@ -7,11 +7,13 @@
     "service_worker": "background.js"
   },
   "action": {},
-  "permissions": ["storage"],
+  "permissions": ["storage","webNavigation",
+    "activeTab",
+    "tabs"],
   "content_scripts": [
     {
-      "matches": ["https://www.simcompanies.com/messages/*chatroom_Sale*"],
-      "run_at": "document_end",
+      "matches": ["https://www.simcompanies.com/*"],
+      "run_at": "document_start",
       "js": ["contentScript.js"]
     }
   ],

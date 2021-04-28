@@ -1,5 +1,5 @@
 function findSalesChatWindow(possibleMatches) {
-    return Array.from(possibleMatches).find(possible => possible.parentNode.innerText === 'SALE').parentNode;
+    return Array.from(possibleMatches).find(possible => possible.innerText === 'SALE');
 }
 
 let button;
@@ -19,37 +19,6 @@ function filterSalesChat(chatWindow) {
     });
 }
 
-
-function registerListenerOnWindow() {
-    const dom = document.getElementById('reactjs-router');
-    const config = {
-        subtree: true, characterData: true, characterDataOldValue: true
-    };
-
-    const callback = function (mutationsList, observer) {
-        for (const mutation of mutationsList) {
-            if (mutation.type === 'characterData' && mutation.target.data === 'Sale') {
-                if (button && button2) {
-                    button.remove();
-                    button2.remove();
-                }
-                createButtonsOnWindow(mutation.target.parentNode);
-            } else if (mutation.type === 'characterData' && mutation.oldValue === 'Sale') {
-                if (button && button2) {
-                    button.remove();
-                    button2.remove();
-                }
-            }
-        }
-    };
-
-    const observer = new MutationObserver(callback);
-
-    observer.observe(dom, config);
-}
-
-registerListenerOnWindow();
-
 let hiddenMessage = [];
 
 function clearFilter() {
@@ -60,11 +29,11 @@ function clearFilter() {
 function register() {
     const possibleMatches = document.querySelectorAll("a[href*='chatroom_Sale~']");
     const salesChat = findSalesChatWindow(possibleMatches);
-
-
 }
 
+
 function createButtonsOnWindow(salesChat) {
+    if(!salesChat) return;
     button = document.createElement('button');
     button.innerText = 'Filter';
     button.id = 'salesFilter';
@@ -85,5 +54,29 @@ function createButtonsOnWindow(salesChat) {
     salesChat.appendChild(button2)
 }
 
+function addButtons() {
+    setTimeout(() => {
+        if (button && button2) {
+            button.remove()
+            button2.remove();
+            button = null;
+            button2 = null;
+        }
+        setTimeout(() => {
+            const possible = document.querySelectorAll('.well-header');
+            createButtonsOnWindow(findSalesChatWindow(possible));
+        }, 200)
+    });
+}
 
+function handleChatroomReloaded(response) {
+    if(response === 'chatroomReloaded'){
+        setTimeout(() => {
+            addButtons();
+        }, 2000)
+    }
+}
 
+chrome.runtime.sendMessage('reloaded', (response) => handleChatroomReloaded(response));
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => addButtons());
