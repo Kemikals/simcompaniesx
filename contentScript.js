@@ -26,12 +26,6 @@ function clearFilter() {
     hiddenMessage = [];
 }
 
-function register() {
-    const possibleMatches = document.querySelectorAll("a[href*='chatroom_Sale~']");
-    const salesChat = findSalesChatWindow(possibleMatches);
-}
-
-
 function createButtonsOnWindow(salesChat) {
     if(!salesChat) return;
     button = document.createElement('button');
@@ -50,8 +44,11 @@ function createButtonsOnWindow(salesChat) {
 
     button.style.marginLeft = '10px';
     button2.style.marginLeft = '10px';
+
     salesChat.appendChild(button)
     salesChat.appendChild(button2)
+
+    salesChat.style.padding = '0px';
 }
 
 function addButtons() {
@@ -73,10 +70,10 @@ function handleChatroomReloaded(response) {
     if(response === 'chatroomReloaded'){
         setTimeout(() => {
             addButtons();
-        }, 2000)
+        }, 4000)
     }
 }
 
 chrome.runtime.sendMessage('reloaded', (response) => handleChatroomReloaded(response));
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => addButtons());
+chrome.runtime.onMessage.addListener(() => addButtons());
