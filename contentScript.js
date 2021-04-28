@@ -52,7 +52,6 @@ function createButtonsOnWindow(salesChat) {
 }
 
 function changeHq() {
-    console.log('changeHq')
     setTimeout(() => {
         if(document.querySelector('.test-headquarters img:nth-child(2)').src !== 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png') {
 
@@ -66,10 +65,16 @@ function changeHq() {
     }, 2000);
 }
 
+function addLinkToExchange(resourceNumber){
+    setTimeout(() => {
+        const resourceWindow =  document.querySelector('.test-resource-detail').children[1].children[1];
+        const marketLink = 'https://www.simcompanies.com/market/resource/' + resourceNumber;
+        resourceWindow.innerHTML = resourceWindow.innerHTML.replace('(Exchange)', '<a href='+marketLink+'>(Exchange)</a>');
+    }, 2000)
+}
+
 function addButtons(message) {
-    console.log(message)
     if(message === 'onChat' || message === 'chatroomReloaded') {
-        console.log('im on the chat');
         setTimeout(() => {
             if (button && button2) {
                 button.remove()
@@ -84,11 +89,12 @@ function addButtons(message) {
         });
     } else if(message === 'onMap' || message === 'mapReloaded'){
         changeHq();
+    } else if(message && message.resource){
+        addLinkToExchange(message.resource);
     }
 }
 
 function handleChatroomReloaded(response) {
-    console.log(response);
     if(response === 'chatroomReloaded'){
         setTimeout(() => {
             addButtons(response);
