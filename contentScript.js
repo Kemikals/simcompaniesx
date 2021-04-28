@@ -51,29 +51,55 @@ function createButtonsOnWindow(salesChat) {
     salesChat.style.padding = '0px';
 }
 
-function addButtons() {
+function changeHq() {
+    console.log('changeHq')
     setTimeout(() => {
-        if (button && button2) {
-            button.remove()
-            button2.remove();
-            button = null;
-            button2 = null;
+        if(document.querySelector('.test-headquarters img:nth-child(2)').src !== 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png') {
+
+            // change hq image
+            document.querySelector('.test-headquarters img:nth-child(2)').src = 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
+
+            // move company logo to correct place
+            document.querySelector('.test-headquarters img:nth-child(3)').style.top = '-21px';
+            document.querySelector('.test-headquarters img:nth-child(3)').style.left = '60px';
         }
+    }, 2000);
+}
+
+function addButtons(message) {
+    console.log(message)
+    if(message === 'onChat' || message === 'chatroomReloaded') {
+        console.log('im on the chat');
         setTimeout(() => {
-            const possible = document.querySelectorAll('.well-header');
-            createButtonsOnWindow(findSalesChatWindow(possible));
-        }, 200)
-    });
+            if (button && button2) {
+                button.remove()
+                button2.remove();
+                button = null;
+                button2 = null;
+            }
+            setTimeout(() => {
+                const possible = document.querySelectorAll('.well-header');
+                createButtonsOnWindow(findSalesChatWindow(possible));
+            }, 200)
+        });
+    } else if(message === 'onMap' || message === 'mapReloaded'){
+        changeHq();
+    }
 }
 
 function handleChatroomReloaded(response) {
+    console.log(response);
     if(response === 'chatroomReloaded'){
         setTimeout(() => {
-            addButtons();
-        }, 4000)
+            addButtons(response);
+        }, 2000)
+    } else if(response === 'mapReloaded'){
+        setTimeout(() => {
+            changeHq();
+        }, 2000)
     }
 }
 
 chrome.runtime.sendMessage('reloaded', (response) => handleChatroomReloaded(response));
 
-chrome.runtime.onMessage.addListener(() => addButtons());
+chrome.runtime.onMessage.addListener((message) => addButtons(message));
