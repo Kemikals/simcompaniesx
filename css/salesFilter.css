@@ -1,0 +1,23 @@
+#salesFilterContent {
+    display: flex;
+    flex-wrap: wrap;
+    flex-basis: 20%;
+}
+
+.selection {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    margin: 1rem;
+}
+
+.resources {
+    display: flex;
+    flex: 1 1 12%; /*grow | shrink | basis */
+    height: auto;
+}
+
+

@@ -1,5 +1,5 @@
 chrome.action.onClicked.addListener(function (tab) {
-    chrome.tabs.create({url: "settings.html"});
+    chrome.tabs.create({url: "/content/settings.html"});
 });
 
 function containsChatRoom(obj) {

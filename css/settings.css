@@ -8,6 +8,10 @@
     margin: 0 1rem 0 1rem;
 }
 
+#main {
+    display: flex;
+}
+
 #content {
     display: flex;
     flex-direction: row;
@@ -36,3 +40,4 @@ img {
     max-width: 100%;
     max-height: 100%;
 }
+

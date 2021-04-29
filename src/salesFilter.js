@@ -6,8 +6,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-const resources = fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/")
-    .then(response => response.json()).then(data => showOptions(data));
+function loadSalesFilterPage() {
+    fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/")
+        .then(response => response.json()).then(data => showOptions(data));
+}
+
 
 function showOptions(data) {
     chrome.storage.sync.get({selectedResources: []}, function (result) {
@@ -36,7 +39,7 @@ function createResource(resource, selected) {
     selection.appendChild(checkbox);
     img.src = "https://d1fxy698ilbz6u.cloudfront.net/static/" + resource.image;
     div.appendChild(selection);
-    document.getElementById('content').appendChild(div);
+    document.getElementById('salesFilterContent').appendChild(div);
 }
 
 function handleSelection(cb, resource) {
@@ -57,7 +60,6 @@ function handleSelection(cb, resource) {
             chrome.storage.sync.set({selectedResources: selectedResources});
         });
     }
-    console.log(chrome.storage.local)
 }
 
 function clear() {
