@@ -1,16 +1,22 @@
-document.addEventListener('DOMContentLoaded', function() {
-    let clearButton = document.getElementById('clearButton');
-    // onClick's logic below:
-    clearButton.addEventListener('click', function() {
-        clear();
-    });
-});
-
-function loadSalesFilterPage() {
-    fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/")
-        .then(response => response.json()).then(data => showOptions(data));
+function clear() {
+    chrome.storage.sync.set({selectedResources: []});
+    const checkboxes = Array.from(document.getElementsByClassName('selected'));
+    console.log(checkboxes);
+    checkboxes.forEach(img => img.classList.remove('selected'))
 }
 
+function loadSalesFilterPage() {
+    $(() => {
+        fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/")
+            .then(response => response.json()).then(data => showOptions(data));
+
+        let clearButton = document.getElementById('clearButton');
+        clearButton.addEventListener('click', function() {
+            clear();
+        });
+    })
+
+}
 
 function showOptions(data) {
     chrome.storage.sync.get({selectedResources: []}, function (result) {
@@ -27,23 +33,29 @@ function createResource(resource, selected) {
     selection.classList.add('selection');
     const img = document.createElement('img');
     selection.appendChild(img);
-    const checkbox = document.createElement('input');
-    if(selected.indexOf(resource.name) > -1){
-        checkbox.checked = true;
-    }
-    checkbox.classList.add('checkbox')
-    checkbox.type = 'checkbox';
-    checkbox.addEventListener('change', function () {
-        handleSelection(checkbox, resource)
-    });
-    selection.appendChild(checkbox);
+
     img.src = "https://d1fxy698ilbz6u.cloudfront.net/static/" + resource.image;
+    img.addEventListener('click', () => {
+        let selected = false;
+        if(img.classList.contains('selected')){
+            img.classList.remove('selected');
+        } else {
+            img.classList.add('selected');
+            selected = true;
+        }
+        handleSelection(selected, resource);
+    })
+    console.log(selected)
+    console.log(resource);
+    if(selected.indexOf(resource.name) >= 0){
+        img.classList.add('selected')
+    }
     div.appendChild(selection);
     document.getElementById('salesFilterContent').appendChild(div);
 }
 
-function handleSelection(cb, resource) {
-    if (cb.checked) {
+function handleSelection(selected, resource) {
+    if (selected) {
         chrome.storage.sync.get({selectedResources: []}, function (result) {
             let selectedResources = result.selectedResources.filter((v, i, a) => a.indexOf(v) === i);
             selectedResources.push(resource.name);
@@ -62,8 +74,3 @@ function handleSelection(cb, resource) {
     }
 }
 
-function clear() {
-    chrome.storage.sync.set({selectedResources: []});
-    const checkboxes = Array.from(document.getElementsByClassName('checkbox'));
-    checkboxes.forEach(checkbox => checkbox.checked = false);
-}
