@@ -1,5 +1,5 @@
 function clear() {
-    chrome.storage.sync.set({selectedResources: []});
+    chrome.storage.local.set({selectedResources: []});
     const selected = Array.from(document.getElementsByClassName('selected'));
     selected.forEach(img => img.classList.remove('selected'))
 }
@@ -11,7 +11,7 @@ function loadSalesFilterPage() {
 }
 
 function showOptions(data) {
-    chrome.storage.sync.get({selectedResources: []}, function (result) {
+    chrome.storage.local.get({selectedResources: []}, function (result) {
         let selectedResources = result.selectedResources.filter((v, i, a) => a.indexOf(v) === i);
         data.forEach(resource => createResource(resource, selectedResources));
     });
@@ -46,20 +46,20 @@ function createResource(resource, selected) {
 
 function handleSelection(selected, resource) {
     if (selected) {
-        chrome.storage.sync.get({selectedResources: []}, function (result) {
+        chrome.storage.local.get({selectedResources: []}, function (result) {
             let selectedResources = result.selectedResources.filter((v, i, a) => a.indexOf(v) === i);
             selectedResources.push(resource.name);
-            chrome.storage.sync.set({selectedResources: selectedResources});
+            chrome.storage.local.set({selectedResources: selectedResources});
             console.log(selectedResources)
         });
     } else {
-        chrome.storage.sync.get({selectedResources: []}, function (result) {
+        chrome.storage.local.get({selectedResources: []}, function (result) {
             let selectedResources = result.selectedResources.filter((v, i, a) => a.indexOf(v) === i);
             const idx = selectedResources.indexOf(resource.name);
             if (idx > -1) {
                 selectedResources.splice(idx, 1);
             }
-            chrome.storage.sync.set({selectedResources: selectedResources});
+            chrome.storage.local.set({selectedResources: selectedResources});
         });
     }
 }
