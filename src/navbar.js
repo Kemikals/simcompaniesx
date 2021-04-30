@@ -11,7 +11,7 @@ function setLinkAction(button, page, callback) {
 }
 
 setTimeout(() => {
-    setLinkAction(document.querySelector('#generalOptions'), 'generalOptions.html');
+    setLinkAction(document.querySelector('#generalOptions'), 'generalOptions.html', loadGeneralOptionsPage);
     setLinkAction(document.querySelector('#salesFilter'), 'salesFilter.html', loadSalesFilterPage);
     setLinkAction(document.querySelector('#documentation'), 'documentation.html');
 }, 400)

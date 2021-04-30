@@ -14,17 +14,40 @@ function isEncyclopediaResource(obj) {
     return obj.url && obj.url.includes('encyclopedia/resource');
 }
 
+
+
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
         chrome.tabs.query({active: true}, (results) => {
             let tab = results.find(result => containsChatRoom(result) || isSimCompaniesMap(result) || isEncyclopediaResource(result))
-            if (tab && containsChatRoom(tab)) {
+            if (settings.options.enableSalesChatFilter && tab && containsChatRoom(tab)) {
                 chrome.tabs.sendMessage(tab.id, 'onChat');
-            } else if (tab && isSimCompaniesMap(tab)) {
+            } else if (settings.options.enableOldStyleHQ && tab && isSimCompaniesMap(tab)) {
                 chrome.tabs.sendMessage(tab.id, 'onMap');
-            } else if (tab && isEncyclopediaResource(tab)) {
+            } else if (settings.options.enableEncylopediaExchangeLink && tab && isEncyclopediaResource(tab)) {
                 chrome.tabs.sendMessage(tab.id, {resource: tab.url.match(/\d+/)[0]})
             }
         })
     }
 });
+
+const settings = {};
+const refreshOptions = getAllStorageSyncData().then(items => {
+    Object.assign(settings, items);
+});
+
+
+chrome.tabs.onActivated.addListener(async ()  => {
+     await refreshOptions;
+})
+
+function getAllStorageSyncData() {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(null, (items) => {
+            if (chrome.runtime.lastError) {
+                return reject(chrome.runtime.lastError);
+            }
+            resolve(items);
+        });
+    });
+}
