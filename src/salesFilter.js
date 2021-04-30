@@ -1,21 +1,13 @@
 function clear() {
     chrome.storage.sync.set({selectedResources: []});
-    const checkboxes = Array.from(document.getElementsByClassName('selected'));
-    console.log(checkboxes);
-    checkboxes.forEach(img => img.classList.remove('selected'))
+    const selected = Array.from(document.getElementsByClassName('selected'));
+    selected.forEach(img => img.classList.remove('selected'))
 }
 
 function loadSalesFilterPage() {
-    $(() => {
         fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/")
             .then(response => response.json()).then(data => showOptions(data));
-
-        let clearButton = document.getElementById('clearButton');
-        clearButton.addEventListener('click', function() {
-            clear();
-        });
-    })
-
+        document.querySelector('#clearButton').addEventListener('click', () => clear());
 }
 
 function showOptions(data) {
@@ -37,7 +29,7 @@ function createResource(resource, selected) {
     img.src = "https://d1fxy698ilbz6u.cloudfront.net/static/" + resource.image;
     img.addEventListener('click', () => {
         let selected = false;
-        if(img.classList.contains('selected')){
+        if (img.classList.contains('selected')) {
             img.classList.remove('selected');
         } else {
             img.classList.add('selected');
@@ -45,9 +37,7 @@ function createResource(resource, selected) {
         }
         handleSelection(selected, resource);
     })
-    console.log(selected)
-    console.log(resource);
-    if(selected.indexOf(resource.name) >= 0){
+    if (selected.indexOf(resource.name) >= 0) {
         img.classList.add('selected')
     }
     div.appendChild(selection);
@@ -66,7 +56,7 @@ function handleSelection(selected, resource) {
         chrome.storage.sync.get({selectedResources: []}, function (result) {
             let selectedResources = result.selectedResources.filter((v, i, a) => a.indexOf(v) === i);
             const idx = selectedResources.indexOf(resource.name);
-            if(idx > -1){
+            if (idx > -1) {
                 selectedResources.splice(idx, 1);
             }
             chrome.storage.sync.set({selectedResources: selectedResources});

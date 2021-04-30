@@ -1,20 +1,20 @@
-$(() => {
-    function setLinkAction(button, page, callback) {
-        button.on('click', (e) => {
-            e.preventDefault();
-            $('#pageContent').load(chrome.runtime.getURL("content/" + page));
-            if(callback){
+function setLinkAction(button, page, callback) {
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+        fetch(chrome.runtime.getURL("content/" + page)).then(response => response.text()).then(content => {
+            document.querySelector('#pageContent').innerHTML = content;
+            if (callback) {
                 callback();
             }
         });
-    }
-    setTimeout(() => {
-        const salesFilter = loadSalesFilterPage;
-        setLinkAction($('#generalOptions'), 'generalOptions.html');
-        setLinkAction($('#salesFilter'), 'salesFilter.html', salesFilter);
-        setLinkAction($('#documentation'), 'documentation.html');
+    });
+}
 
-    }, 400)
-});
+setTimeout(() => {
+    setLinkAction(document.querySelector('#generalOptions'), 'generalOptions.html');
+    setLinkAction(document.querySelector('#salesFilter'), 'salesFilter.html', loadSalesFilterPage);
+    setLinkAction(document.querySelector('#documentation'), 'documentation.html');
+}, 400)
+
 
 
