@@ -15,17 +15,14 @@ function isEncyclopediaResource(obj) {
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-
     if (changeInfo.status === 'complete') {
         chrome.tabs.query({active: true}, (results) => {
-            let tab = results.find(result => containsChatRoom(result) || isSimCompaniesMap(result))
+            let tab = results.find(result => containsChatRoom(result) || isSimCompaniesMap(result) || isEncyclopediaResource(result))
             if (tab && containsChatRoom(tab)) {
-                console.log(tab);
                 chrome.tabs.sendMessage(tab.id, 'onChat');
             } else if (tab && isSimCompaniesMap(tab)) {
                 chrome.tabs.sendMessage(tab.id, 'onMap');
-                console.log(tab);
-            } else if (tab && isEncyclopediaResource()) {
+            } else if (tab && isEncyclopediaResource(tab)) {
                 chrome.tabs.sendMessage(tab.id, {resource: tab.url.match(/\d+/)[0]})
             }
         })

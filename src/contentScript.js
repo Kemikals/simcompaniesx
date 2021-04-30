@@ -54,30 +54,27 @@ function createButtonsOnWindow(salesChat) {
 
 function changeHq() {
     let hqImage = document.querySelector('.test-headquarters img:nth-child(2)');
-    if (hqImage && hqImage.src !== 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png') {
-
+    if (hqImage) {
         // change hq image
         hqImage.src = 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
-
         // move company logo to correct place
         document.querySelector('.test-headquarters img:nth-child(3)').style.top = '-21px';
         document.querySelector('.test-headquarters img:nth-child(3)').style.left = '60px';
-        return true;
+        return document.querySelector('.test-headquarters img:nth-child(2)').src === 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
     }
     return false;
 }
 
 function addLinkToExchange(resourceNumber) {
     const detail = document.querySelector('.test-resource-detail');
-    if(!detail) return false;
-    const resourceWindow = document.querySelector('.test-resource-detail').children[1].children[1];
+    if(!(detail && detail.children[1] && detail.children[1])) return false;
+    const resourceWindow = detail.children[1].children[1];
     const marketLink = 'https://www.simcompanies.com/market/resource/' + resourceNumber;
     resourceWindow.innerHTML = resourceWindow.innerHTML.replace('(Exchange)', '<a href=' + marketLink + '>(Exchange)</a>');
     return true;
 }
 
 function handleMessageFromService(message) {
-    console.log(message);
     if (message === 'onChat') {
         if (button && button2) {
             button.remove()
@@ -93,10 +90,10 @@ function handleMessageFromService(message) {
     }
 }
 
-function tryAtInterval(callback, interval, limit, message) {
+function tryAtInterval(callback, interval, limit) {
     let timesRun = 0;
     const repeater = setInterval(() => {
-        if (callback(message) || (limit && timesRun < limit)) {
+        if (callback() || (limit && timesRun++ > limit)) {
             clearInterval(repeater)
         }
     }, interval)
