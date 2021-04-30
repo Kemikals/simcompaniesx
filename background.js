@@ -45,7 +45,6 @@ function getAllStorageSyncData() {
 function refreshOptions() {
     getAllStorageSyncData().then(items => {
         Object.assign(settings, items);
-        console.log(settings)
     });
 }
 

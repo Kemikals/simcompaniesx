@@ -11,6 +11,7 @@ function filterSalesChat(chatWindow) {
         let resources = Array.from(chat.getElementsByClassName('chat-resource')).map(chat => chat.childNodes[0].alt);
         chrome.storage.local.get('selectedResources', function (result) {
             const chosen = result.selectedResources;
+            if(!chosen || chosen.length === 0) return;
             if (!chosen.some(r => resources.indexOf(r) >= 0)) {
                 hiddenMessage.push(chat);
                 chat.style.display = 'none';

@@ -50,7 +50,6 @@ function handleSelection(selected, resource) {
             let selectedResources = result.selectedResources.filter((v, i, a) => a.indexOf(v) === i);
             selectedResources.push(resource.name);
             chrome.storage.local.set({selectedResources: selectedResources});
-            console.log(selectedResources)
         });
     } else {
         chrome.storage.local.get({selectedResources: []}, function (result) {
