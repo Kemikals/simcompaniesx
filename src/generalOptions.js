@@ -8,8 +8,8 @@ function loadGeneralOptionsPage() {
     chrome.storage.sync.get('options', (data) => {
         Object.assign(options, data.options)
         enableSalesChatFilter.checked = Boolean(options.enableSalesChatFilter);
-        enableOldStyleHQ.checked = Boolean(options.enableSalesChatFilter);
-
+        enableOldStyleHQ.checked = Boolean(options.enableOldStyleHQ);
+        enableEncyclopediaExchangeLink.checked = Boolean(options.enableEncyclopediaExchangeLink);
     });
 
     enableSalesChatFilter.addEventListener('change', (event) => {

@@ -24,7 +24,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                 chrome.tabs.sendMessage(tab.id, 'onChat');
             } else if (settings.options.enableOldStyleHQ && tab && isSimCompaniesMap(tab)) {
                 chrome.tabs.sendMessage(tab.id, 'onMap');
-            } else if (settings.options.enableEncylopediaExchangeLink && tab && isEncyclopediaResource(tab)) {
+            } else if (settings.options.enableEncyclopediaExchangeLink && tab && isEncyclopediaResource(tab)) {
                 chrome.tabs.sendMessage(tab.id, {resource: tab.url.match(/\d+/)[0]})
             }
         })
