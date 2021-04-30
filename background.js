@@ -33,7 +33,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 function getAllStorageSyncData() {
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(null, (items) => {
+        chrome.storage.local.get(null, (items) => {
             if (chrome.runtime.lastError) {
                 return reject(chrome.runtime.lastError);
             }
@@ -45,6 +45,7 @@ function getAllStorageSyncData() {
 function refreshOptions() {
     getAllStorageSyncData().then(items => {
         Object.assign(settings, items);
+        console.log(settings)
     });
 }
 

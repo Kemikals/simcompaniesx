@@ -5,7 +5,7 @@ function loadGeneralOptionsPage() {
     const enableOldStyleHQ = document.querySelector('#enableOldStyleHQ');
     const enableEncyclopediaExchangeLink = document.querySelector('#enableEncyclopediaLink');
 
-    chrome.storage.sync.get('options', (data) => {
+    chrome.storage.local.get('options', (data) => {
         Object.assign(options, data.options)
         enableSalesChatFilter.checked = Boolean(options.enableSalesChatFilter);
         enableOldStyleHQ.checked = Boolean(options.enableOldStyleHQ);
@@ -14,16 +14,16 @@ function loadGeneralOptionsPage() {
 
     enableSalesChatFilter.addEventListener('change', (event) => {
         options.enableSalesChatFilter = event.target.checked;
-        chrome.storage.sync.set({options});
+        chrome.storage.local.set({options});
     });
 
     enableOldStyleHQ.addEventListener('change', (event) => {
         options.enableOldStyleHQ = event.target.checked;
-        chrome.storage.sync.set({options});
+        chrome.storage.local.set({options});
     });
 
     enableEncyclopediaExchangeLink.addEventListener('change', (event) => {
         options.enableEncyclopediaExchangeLink = event.target.checked;
-        chrome.storage.sync.set({options});
+        chrome.storage.local.set({options});
     });
 }

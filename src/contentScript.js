@@ -9,7 +9,7 @@ function filterSalesChat(chatWindow) {
     let chatText = Array.from(chatWindow.childNodes[1].children[0].children);
     chatText.forEach(chat => {
         let resources = Array.from(chat.getElementsByClassName('chat-resource')).map(chat => chat.childNodes[0].alt);
-        chrome.storage.sync.get('selectedResources', function (result) {
+        chrome.storage.local.get('selectedResources', function (result) {
             const chosen = result.selectedResources;
             if (!chosen.some(r => resources.indexOf(r) >= 0)) {
                 hiddenMessage.push(chat);
