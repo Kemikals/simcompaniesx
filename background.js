@@ -1,3 +1,5 @@
+const settings = {};
+
 chrome.action.onClicked.addListener(function (tab) {
     chrome.tabs.create({url: "/content/settings.html"});
 });
@@ -29,16 +31,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     }
 });
 
-const settings = {};
-const refreshOptions = getAllStorageSyncData().then(items => {
-    Object.assign(settings, items);
-});
-
-
-chrome.tabs.onActivated.addListener(async () => {
-    await refreshOptions;
-})
-
 function getAllStorageSyncData() {
     return new Promise((resolve, reject) => {
         chrome.storage.sync.get(null, (items) => {
@@ -49,3 +41,15 @@ function getAllStorageSyncData() {
         });
     });
 }
+
+function refreshOptions() {
+    getAllStorageSyncData().then(items => {
+        Object.assign(settings, items);
+    });
+}
+
+
+chrome.tabs.onActivated.addListener(() => {
+   refreshOptions()
+})
+
