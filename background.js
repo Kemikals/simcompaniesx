@@ -14,8 +14,6 @@ function isEncyclopediaResource(obj) {
     return obj.url && obj.url.includes('encyclopedia/resource');
 }
 
-
-
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
         chrome.tabs.query({active: true}, (results) => {
@@ -37,8 +35,8 @@ const refreshOptions = getAllStorageSyncData().then(items => {
 });
 
 
-chrome.tabs.onActivated.addListener(async ()  => {
-     await refreshOptions;
+chrome.tabs.onActivated.addListener(async () => {
+    await refreshOptions;
 })
 
 function getAllStorageSyncData() {
