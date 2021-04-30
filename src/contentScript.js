@@ -27,7 +27,7 @@ function clearFilter() {
 }
 
 function createButtonsOnWindow(salesChat) {
-    if(!salesChat) return;
+    if (!salesChat) return false;
     button = document.createElement('button');
     button.innerText = 'Filter';
     button.id = 'salesFilter';
@@ -49,63 +49,57 @@ function createButtonsOnWindow(salesChat) {
     salesChat.appendChild(button2)
 
     salesChat.style.padding = '0px';
+    return true;
 }
 
 function changeHq() {
-    setTimeout(() => {
-        if(document.querySelector('.test-headquarters img:nth-child(2)').src !== 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png') {
+    let hqImage = document.querySelector('.test-headquarters img:nth-child(2)');
+    if (hqImage && hqImage.src !== 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png') {
 
-            // change hq image
-            document.querySelector('.test-headquarters img:nth-child(2)').src = 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
+        // change hq image
+        hqImage.src = 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
 
-            // move company logo to correct place
-            document.querySelector('.test-headquarters img:nth-child(3)').style.top = '-21px';
-            document.querySelector('.test-headquarters img:nth-child(3)').style.left = '60px';
+        // move company logo to correct place
+        document.querySelector('.test-headquarters img:nth-child(3)').style.top = '-21px';
+        document.querySelector('.test-headquarters img:nth-child(3)').style.left = '60px';
+        return true;
+    }
+    return false;
+}
+
+function addLinkToExchange(resourceNumber) {
+    const detail = document.querySelector('.test-resource-detail');
+    if(!detail) return false;
+    const resourceWindow = document.querySelector('.test-resource-detail').children[1].children[1];
+    const marketLink = 'https://www.simcompanies.com/market/resource/' + resourceNumber;
+    resourceWindow.innerHTML = resourceWindow.innerHTML.replace('(Exchange)', '<a href=' + marketLink + '>(Exchange)</a>');
+    return true;
+}
+
+function handleMessageFromService(message) {
+    console.log(message);
+    if (message === 'onChat') {
+        if (button && button2) {
+            button.remove()
+            button2.remove();
+            button = null;
+            button2 = null;
         }
-    }, 2000);
-}
-
-function addLinkToExchange(resourceNumber){
-    setTimeout(() => {
-        const resourceWindow =  document.querySelector('.test-resource-detail').children[1].children[1];
-        const marketLink = 'https://www.simcompanies.com/market/resource/' + resourceNumber;
-        resourceWindow.innerHTML = resourceWindow.innerHTML.replace('(Exchange)', '<a href='+marketLink+'>(Exchange)</a>');
-    }, 2000)
-}
-
-function addButtons(message) {
-    if(message === 'onChat' || message === 'chatroomReloaded') {
-        setTimeout(() => {
-            if (button && button2) {
-                button.remove()
-                button2.remove();
-                button = null;
-                button2 = null;
-            }
-            setTimeout(() => {
-                const possible = document.querySelectorAll('.well-header');
-                createButtonsOnWindow(findSalesChatWindow(possible));
-            }, 200)
-        });
-    } else if(message === 'onMap' || message === 'mapReloaded'){
-        changeHq();
-    } else if(message && message.resource){
-        addLinkToExchange(message.resource);
+        tryAtInterval(() => createButtonsOnWindow(findSalesChatWindow(document.querySelectorAll('.well-header'))), 100, 20)
+    } else if (message === 'onMap') {
+        tryAtInterval(changeHq, 100, 20);
+    } else if (message && message.resource) {
+        tryAtInterval(() => addLinkToExchange(message.resource), 100, 20);
     }
 }
 
-function handleChatroomReloaded(response) {
-    if(response === 'chatroomReloaded'){
-        setTimeout(() => {
-            addButtons(response);
-        }, 2000)
-    } else if(response === 'mapReloaded'){
-        setTimeout(() => {
-            changeHq();
-        }, 2000)
-    }
+function tryAtInterval(callback, interval, limit, message) {
+    let timesRun = 0;
+    const repeater = setInterval(() => {
+        if (callback(message) || (limit && timesRun < limit)) {
+            clearInterval(repeater)
+        }
+    }, interval)
 }
 
-chrome.runtime.sendMessage('reloaded', (response) => handleChatroomReloaded(response));
-
-chrome.runtime.onMessage.addListener((message) => addButtons(message));
+chrome.runtime.onMessage.addListener((message) => handleMessageFromService(message));

@@ -15,30 +15,19 @@ function isEncyclopediaResource(obj) {
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status === 'loading' && containsChatRoom(changeInfo)) {
-        chrome.tabs.sendMessage(tabId, 'onChat');
-    } else if(changeInfo.status === 'loading' && isSimCompaniesMap(changeInfo)){
-        chrome.tabs.sendMessage(tabId, 'onMap');
-    } else if(changeInfo.status === 'loading' && isEncyclopediaResource(changeInfo)){
-        chrome.tabs.sendMessage(tabId, {resource: changeInfo.url.match(/\d+/)[0]})
+
+    if (changeInfo.status === 'complete') {
+        chrome.tabs.query({active: true}, (results) => {
+            let tab = results.find(result => containsChatRoom(result) || isSimCompaniesMap(result))
+            if (tab && containsChatRoom(tab)) {
+                console.log(tab);
+                chrome.tabs.sendMessage(tab.id, 'onChat');
+            } else if (tab && isSimCompaniesMap(tab)) {
+                chrome.tabs.sendMessage(tab.id, 'onMap');
+                console.log(tab);
+            } else if (tab && isEncyclopediaResource()) {
+                chrome.tabs.sendMessage(tab.id, {resource: tab.url.match(/\d+/)[0]})
+            }
+        })
     }
 });
-
-
-function checkUrl(request, sender, sendResponse) {
-    if (request === 'reloaded') {
-        chrome.tabs.query({active: true}, (result) => {
-            if (result.find(result => containsChatRoom(result))) {
-                sendResponse('chatroomReloaded');
-            } else if(result.find(result => isSimCompaniesMap(result))){
-                sendResponse('mapReloaded');
-            }
-        });
-        return true;
-    } else {
-        sendResponse('ignore');
-    }
-}
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => checkUrl(request, sender, sendResponse));
-
