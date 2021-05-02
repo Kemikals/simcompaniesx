@@ -1,5 +1,3 @@
-const settings = {};
-
 chrome.action.onClicked.addListener(function (tab) {
     chrome.tabs.create({url: "/content/settings.html"});
 });
@@ -34,27 +32,4 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     }
 });
 
-
-
-function getAllStorageSyncData() {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(null, (items) => {
-            if (chrome.runtime.lastError) {
-                return reject(chrome.runtime.lastError);
-            }
-            resolve(items);
-        });
-    });
-}
-
-function refreshOptions() {
-    getAllStorageSyncData().then(items => {
-        Object.assign(settings, items);
-    });
-}
-
-
-chrome.tabs.onActivated.addListener(() => {
-   refreshOptions()
-})
 
