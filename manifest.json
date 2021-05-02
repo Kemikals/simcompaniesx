@@ -14,7 +14,7 @@
     {
       "matches": ["https://www.simcompanies.com/*"],
       "run_at": "document_idle",
-      "js": ["/src/contentScript.js"]
+      "js": ["/src/content-script.js"]
     }
   ],
   "icons": {

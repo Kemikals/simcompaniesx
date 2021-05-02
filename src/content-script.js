@@ -11,7 +11,7 @@ function filterSalesChat(chatWindow) {
         let resources = Array.from(chat.getElementsByClassName('chat-resource')).map(chat => chat.childNodes[0].alt);
         chrome.storage.local.get('selectedResources', function (result) {
             const chosen = result.selectedResources;
-            if(!chosen || chosen.length === 0) return;
+            if (!chosen || chosen.length === 0) return;
             if (!chosen.some(r => resources.indexOf(r) >= 0)) {
                 hiddenMessage.push(chat);
                 chat.style.display = 'none';
@@ -66,16 +66,27 @@ function changeHq() {
     return false;
 }
 
+let toExchangeButton;
+
 function addLinkToExchange(resourceNumber) {
+    if(toExchangeButton){
+        toExchangeButton.remove()
+    }
     const detail = document.querySelector('.test-resource-detail');
-    if(!(detail && detail.children[1] && detail.children[1])) return false;
+    if (!(detail && detail.children[1] && detail.children[1])) return false;
     const resourceWindow = detail.children[1].children[1];
     const marketLink = 'https://www.simcompanies.com/market/resource/' + resourceNumber;
-    resourceWindow.innerHTML = resourceWindow.innerHTML.replace('(Exchange)', '<a href=' + marketLink + '>(Exchange)</a>');
+    toExchangeButton = document.createElement('button')
+    toExchangeButton.textContent = 'To Exchange'
+    resourceWindow.appendChild(toExchangeButton);
+    toExchangeButton.addEventListener('click', () => {
+        location.href = marketLink
+    })
     return true;
 }
 
 function handleMessageFromService(message) {
+    console.log(message);
     if (message === 'onChat') {
         if (button && button2) {
             button.remove()
@@ -94,7 +105,7 @@ function handleMessageFromService(message) {
 function tryAtInterval(callback, interval, limit) {
     let timesRun = 0;
     const repeater = setInterval(() => {
-        if (callback() || (limit && timesRun++ > limit)) {
+        if (callback() || (limit && ++timesRun > limit)) {
             clearInterval(repeater)
         }
     }, interval)
