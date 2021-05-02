@@ -2,8 +2,8 @@ function findSalesChatWindow(possibleMatches) {
     return Array.from(possibleMatches).find(possible => possible.innerText === 'SALE');
 }
 
-let button;
-let button2;
+let filterButton;
+let clearFilterButton;
 
 function filterSalesChat(chatWindow) {
     let chatText = Array.from(chatWindow.childNodes[1].children[0].children);
@@ -27,28 +27,21 @@ function clearFilter() {
     hiddenMessage = [];
 }
 
+function createButton(id, text, clickHandler) {
+    const button = document.createElement('button');
+    button.innerText = text;
+    button.addEventListener('click', clickHandler);
+    button.style.marginLeft = '10px';
+    return button;
+}
+
 function createButtonsOnWindow(salesChat) {
     if (!salesChat) return false;
-    button = document.createElement('button');
-    button.innerText = 'Filter';
-    button.id = 'salesFilter';
-    button.addEventListener('click', function () {
-        filterSalesChat(salesChat.parentNode)
-    });
+    filterButton = createButton('salesFilter', 'Filter', () => filterSalesChat(salesChat.parentNode));
+    clearFilterButton = createButton('clear', 'Clear Filter', clearFilter)
 
-    button2 = document.createElement('button');
-    button2.innerText = 'Clear Filter';
-    button2.id = 'clear';
-    button2.addEventListener('click', function () {
-        clearFilter();
-    });
-
-    button.style.marginLeft = '10px';
-    button2.style.marginLeft = '10px';
-
-    salesChat.appendChild(button)
-    salesChat.appendChild(button2)
-
+    salesChat.appendChild(filterButton)
+    salesChat.appendChild(clearFilterButton)
     salesChat.style.padding = '0px';
     return true;
 }
@@ -85,14 +78,17 @@ function addLinkToExchange(resourceNumber) {
     return true;
 }
 
+function removeAllElements(...buttons){
+    buttons.forEach((button) => {
+        if(button){
+            button.remove()
+        }
+    })
+}
+
 function handleMessageFromService(message) {
     if (message === 'onChat') {
-        if (button && button2) {
-            button.remove()
-            button2.remove();
-            button = null;
-            button2 = null;
-        }
+        removeAllElements(filterButton, clearFilterButton);
         tryAtInterval(() => createButtonsOnWindow(findSalesChatWindow(document.querySelectorAll('.well-header'))), 100, 20)
     } else if (message === 'onMap') {
         tryAtInterval(changeHq, 100, 20);
