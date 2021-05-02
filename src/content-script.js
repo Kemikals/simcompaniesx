@@ -86,7 +86,6 @@ function addLinkToExchange(resourceNumber) {
 }
 
 function handleMessageFromService(message) {
-    console.log(message);
     if (message === 'onChat') {
         if (button && button2) {
             button.remove()
