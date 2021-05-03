@@ -1,4 +1,8 @@
 (function () {
+
+    const marketResourceLink = 'https://www.simcompanies.com/market/resource/';
+    const oldHQImageLink = 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
+
     let filterButton;
     let clearFilterButton;
     let toExchangeButton;
@@ -44,29 +48,23 @@
 
     function changeHq() {
         let hqImage = document.querySelector('.test-headquarters img:nth-child(2)');
-        if (hqImage) {
-            // change hq image
-            hqImage.src = 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
-            // move company logo to correct place
-            document.querySelector('.test-headquarters img:nth-child(3)').style.top = '-21px';
-            document.querySelector('.test-headquarters img:nth-child(3)').style.left = '60px';
-            return document.querySelector('.test-headquarters img:nth-child(2)').src === 'https://d1fxy698ilbz6u.cloudfront.net/static/images/landscape/hq-lvl10.png';
-        }
-        return false;
+        if(!hqImage) return false;
+        hqImage.src = oldHQImageLink;
+        const logo = document.querySelector('.test-headquarters img:nth-child(3)');
+        logo.style.top = '-21px';
+        logo.style.left = '60px';
+        return document.querySelector('.test-headquarters img:nth-child(2)')?.src === oldHQImageLink;
     }
 
 
     function addLinkToExchange(resourceNumber) {
-        if (toExchangeButton) {
-            toExchangeButton.remove()
-        }
-        const detail = document.querySelector('.test-resource-detail');
-        if (!(detail && detail.children[1] && detail.children[1])) return false;
-        const resourceWindow = detail.children[1].children[1];
-        const marketLink = 'https://www.simcompanies.com/market/resource/' + resourceNumber;
+        toExchangeButton?.remove();
+        const resourceElement = document.querySelector('.test-resource-detail div:nth-child(2) div:nth-child(2)');
+        if (!resourceElement) return false;
+        const marketLink = marketResourceLink + resourceNumber;
         toExchangeButton = document.createElement('button')
         toExchangeButton.textContent = 'To Exchange'
-        resourceWindow.appendChild(toExchangeButton);
+        resourceElement.appendChild(toExchangeButton);
         toExchangeButton.addEventListener('click', () => {
             location.href = marketLink
         })
@@ -74,13 +72,20 @@
     }
 
     function handleMessageFromService(message) {
-        if (message === 'onChat') {
+        if (message?.location === 'onChat') {
             removeAllElements(filterButton, clearFilterButton);
             tryAtInterval(() => createButtonsOnWindow(findSalesChatWindow(document.querySelectorAll('.well-header'))), 100, 20)
-        } else if (message === 'onMap') {
-            tryAtInterval(changeHq, 100, 20);
+        } else if (message?.location === 'onMap') {
+            if (message.options["enableOldStyleHQ"]) {
+                tryAtInterval(changeHq, 100, 20);
+            }
+            if (message.options["enableIdleBuildingHighlight"]) {
+                setTimeout(() => {
+                    colorIdleBuildings();
+                }, 200)
+            }
         } else if (message && message.resource) {
-            tryAtInterval(() => addLinkToExchange(message.resource), 100, 20);
+            tryAtInterval(() => addLinkToExchange(message.resource), 200, 20);
         }
     }
 
@@ -90,15 +95,16 @@
 
     chrome.runtime.onMessage.addListener((message) => handleMessageFromService(message));
 
-    // TODO finish implementing
     function colorIdleBuildings() {
         const buildings = Array.from(document.querySelectorAll("a[href*='/b/']"));
         buildings.forEach(building => {
-           if(building.innerText.includes('Producing')){
-               console.log(building)
-               const buildingText = building.children[3].children[1].children[0];
-               buildingText.style.backgroundColor = 'yellow';
-           }
+            console.dir(building)
+            if (!building.innerText.includes('Producing') && !building.innerText.includes('New')) {
+                const buildingText = building.querySelector('small');
+                console.dir(buildingText)
+                buildingText.style.backgroundColor = 'yellow';
+                buildingText.parentNode.children[0].style.backgroundColor = 'yellow';
+            }
         });
     }
 })();
