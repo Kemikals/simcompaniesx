@@ -34,7 +34,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
 
 const resourceHotKeyMap = [];
 
-chrome.contextMenus.create({title: "Resource Emotes", visible: true, enabled: true, id: "resources"})
+chrome.contextMenus.create({title: "Resource Emotes", visible: true, enabled: true, id: "resources", documentUrlPatterns: ['https://www.simcompanies.com/*'] })
 
 fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/").then(response => response.json()).then(result => {
     Array.from(result).forEach(resource => {
