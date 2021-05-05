@@ -48,7 +48,7 @@
 
     function changeHq() {
         let hqImage = document.querySelector('.test-headquarters img:nth-child(2)');
-        if(!hqImage) return false;
+        if (!hqImage) return false;
         hqImage.src = oldHQImageLink;
         const logo = document.querySelector('.test-headquarters img:nth-child(3)');
         logo.style.top = '-21px';
@@ -71,6 +71,14 @@
         return true;
     }
 
+    function removeTicker() {
+        document.querySelector('.market-ticker')?.remove();
+    }
+
+    function hideContest() {
+        document.querySelector('.contest')?.remove();
+    }
+
     function handleMessageFromService(message) {
         if (message?.location === 'onChat') {
             removeAllElements(filterButton, clearFilterButton);
@@ -86,6 +94,28 @@
             }
         } else if (message && message.resource) {
             tryAtInterval(() => addLinkToExchange(message.resource), 200, 20);
+        }
+
+        if (message && message.options && message.options["removeTicker"]) {
+            setTimeout(() => {
+                removeTicker()
+            }, 200)
+        }
+
+        if (message && message.options && message.options["hideContest"]) {
+            setTimeout(() => {
+                hideContest()
+            }, 200)
+        }
+
+        if (message && message.message === 'resourceMenuClicked') {
+            console.log('here')
+            const copyFrom = document.createElement("textarea");
+            copyFrom.textContent = message.data;
+            document.body.appendChild(copyFrom);
+            copyFrom.select();
+            document.execCommand('copy');
+            document.body.removeChild(copyFrom);
         }
     }
 
