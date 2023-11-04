@@ -32,9 +32,13 @@
     }
 
     function filterSalesChat(chatWindow) {
-        let chatText = Array.from(chatWindow.childNodes[1].children[0].children);
+        let chatText = Array.from(chatWindow.childNodes[1].children[0].children[0].children);
         chatText.forEach(chat => {
-            let resources = Array.from(chat.getElementsByClassName('chat-resource')).map(chat => chat.childNodes[0].alt);
+            const chatContent = chat.childNodes[2];
+            if (!chatContent) return;
+            let resources = Array.from(
+              chatContent.getElementsByTagName('img')
+            ).map((img) => img.title);
             chrome.storage.local.get('selectedResources', function (result) {
                 const chosen = result.selectedResources;
                 if (!chosen || chosen.length === 0) return;
@@ -120,7 +124,7 @@
     }
 
     function findSalesChatWindow(possibleMatches) {
-        return Array.from(possibleMatches).find(possible => possible.innerText === 'SALE');
+        return Array.from(possibleMatches).find(possible => possible.innerText === 'SALES');
     }
 
     chrome.runtime.onMessage.addListener((message) => handleMessageFromService(message));

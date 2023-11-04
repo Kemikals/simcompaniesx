@@ -36,7 +36,7 @@ const resourceHotKeyMap = [];
 
 chrome.contextMenus.create({title: "Resource Emotes", visible: true, enabled: true, id: "resources", documentUrlPatterns: ['https://www.simcompanies.com/*'] })
 
-fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/").then(response => response.json()).then(result => {
+fetch("https://www.simcompanies.com/api/v4/en/0/encyclopedia/resources/").then(response => response.json()).then(result => {
     Array.from(result).forEach(resource => {
         chrome.contextMenus.create(
             {title: resource.name, visible: true, enabled: true, parentId: "resources", id: resource.name});
