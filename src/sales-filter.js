@@ -5,7 +5,7 @@ function clear() {
 }
 
 function loadSalesFilterPage() {
-        fetch("https://www.simcompanies.com/api/v3/en/encyclopedia/resources/")
+        fetch("https://www.simcompanies.com/api/v4/en/0/encyclopedia/resources/")
             .then(response => response.json()).then(data => showOptions(data));
         document.querySelector('#clearButton').addEventListener('click', () => clear());
 }
